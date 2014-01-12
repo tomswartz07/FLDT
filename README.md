@@ -3,7 +3,7 @@ FLDT
 
 The Fast Linux Deployment Toolkit
 
-Developed by student Penn Manor High School student Andrew Lobos 
+Developed by Penn Manor High School student Andrew Lobos 
 and the Penn Manor IT Team for our 1:1 student laptop program, 
 FLDT (Fast Linux Deployment Toolkit) uses a variety of open source 
 tools to quickly image and configure either single machines or large
