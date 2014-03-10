@@ -1,1 +1,0 @@
-Generated initrd images get put here

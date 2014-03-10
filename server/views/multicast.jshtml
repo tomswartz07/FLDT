@@ -46,7 +46,11 @@
 			<div class="alert">
 			The current active image is @locals.currentImage
 			</div>
-			<a href="/multicast?start=true" class="btn btn-success">Start Multicast</a>
+			<form method="get" action="/multicast">
+				<input type="hidden" name="start" value="true">
+				Autostart after <input type="text" name="autostart" value="47" style="width: 30px"> computers connect<br><br>
+				<input type="submit" class="btn btn-success" value="Start Multicast" >
+			</form>
 		}
 	</div>
     <script src="http://code.jquery.com/jquery.js"></script>

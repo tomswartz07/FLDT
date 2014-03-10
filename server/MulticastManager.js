@@ -22,12 +22,13 @@ function getStatus()
 	return process != undefined;
 }
 
-function start(image)
+function start(image, minClients)
 {
 	if ( image == "" || process != undefined )
 		return false;
-	process = child_process.exec("/bin/sh sendMulticastImage.sh "+image);
-	console.log("/bin/sh sendMulticastImage.sh "+image);
+	if ( minClients == undefined )
+		minClients = "";
+	process = child_process.exec("/bin/sh sendMulticastImage.sh "+image+" "+minClients);
 	process.on("exit", function()
 	{
 		process = undefined;

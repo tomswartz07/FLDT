@@ -53,6 +53,13 @@
 			}
 		}
 		</select>
+		<br>
+		Action After Imaging:
+		<select id="postImageAction">
+			<option value="shell">Drop to Shell</option>
+			<option value="reboot">Reboot</option>
+			<option value="shutdown">Shutdown</option>
+		</select>
 	
 		<div class="well">
 		Images are stored on the server in /images<br>
@@ -70,6 +77,12 @@
 	{
 		value = $("#selectedImage").val();
 		$.get("/api/currentImage?set="+value);
+	});
+	
+	$("#postImageAction").change(function()
+	{
+		value = $("#postImageAction").val();
+		$.get("/api/postImageAction?set="+value);
 	});
 	</script>
   </body>

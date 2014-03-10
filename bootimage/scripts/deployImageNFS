@@ -24,7 +24,9 @@ echo "I am $HOSTNAME with MAC address $MACADDR"
 
 mount -t nfs4 $IMAGING_SERVER:/images /nfs
 
-dd if=/nfs/$IMAGE_NAME/mbr.bin of=/dev/sda bs=512 count=1
+#dd if=/nfs/$IMAGE_NAME/mbr.bin of=/dev/sda bs=512 count=1
+
+sfdisk /dev/sda < /nfs/$IMAGE_NAME/partitiontable.txt
 
 hdparm -z /dev/sda
 mdev -s

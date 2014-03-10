@@ -50,6 +50,24 @@ app.get("/api/currentImage", function(req,res)
 	res.send(images[selectedImage]);
 });
 
+app.get("/api/postImageAction", function(req,res)
+{
+	if ( req.param("set") != undefined  )
+	{
+		redis.set("postImageAction", req.param("set"));
+	}
+	else
+	{
+		redis.get("postImageAction", function(err,redisres)
+		{
+			if ( redisres == undefined )
+				res.send("shell");
+			else
+				res.send(redisres);
+		});
+	}
+});
+
 app.get("/api/images", function(req,res)
 {
 	res.json(images);
@@ -81,12 +99,16 @@ app.get("/", function (req,res)
 })
 
 app.get("/images", function(req,res) { 
-	res.locals({
-		"images": images,
-		"selectedImage": selectedImage
-	});
+	redis.get("postImageAction", function(err, action)
+	{
+		res.locals({
+			"images": images,
+			"selectedImage": selectedImage,
+			"action": action
+		});
 	
-	res.render("images");
+		res.render("images");
+	});
 });
 
 
@@ -132,7 +154,7 @@ app.get("/multicast", function(req,res) {
 	
 	if ( req.param("start") )
 	{
-		multicastManager.start(images[selectedImage]);
+		multicastManager.start(images[selectedImage], req.param("autostart"));
 		res.redirect("/multicast");
 	}
 	else if ( req.param("stop") )

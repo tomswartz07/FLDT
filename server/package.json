@@ -1,0 +1,10 @@
+{
+  "name": "FLDT",
+  "description": "Server-side interface for FLDT",
+  "version": "0.0.1",
+  "dependencies": {
+    "express": "*",
+    "redis": "*",
+	"jshtml-express": "*"
+  }
+}

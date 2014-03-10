@@ -169,7 +169,6 @@ ln -s /bin/busybox /bin/mesg
 ln -s /bin/busybox /bin/microcom
 ln -s /bin/busybox /bin/mkdir
 ln -s /bin/busybox /bin/mkdosfs
-ln -s /bin/busybox /bin/mke2fs
 ln -s /bin/busybox /bin/mkfifo
 ln -s /bin/busybox /bin/mkfs.ext2
 ln -s /bin/busybox /bin/mkfs.minix
