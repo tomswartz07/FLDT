@@ -18,6 +18,7 @@ process.chdir(__dirname);
 
 var fs = require("fs"),
 	express = require("express"),
+	bodyParser = require('body-parser'),
 	app = express(),
 	hostDB = require("./Host.js"),
 	multicastManager = require("./MulticastManager.js"),
@@ -25,7 +26,7 @@ var fs = require("fs"),
 
 var hosts = new Array();
 
-app.use(express.bodyParser({uploadDir:"/tmp"}));
+app.use(bodyParser({uploadDir:"/tmp"}));
 app.engine('jshtml', require('jshtml-express'));
 app.set('view engine', 'jshtml');
 
