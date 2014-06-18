@@ -31,7 +31,8 @@ program, which heavily used this software, can be found
 #### Prerequisites
 * Node.js
 * Redis-Server
-* A NFS export of /images
+* CPIO
+* A NFS export of image files located at `/images`
 * A DHCP server configured for PXE booting, along with TFTPd
 * A compiled Linux kernel with support for your hardware, devtmpfs, and NFS filesystems.
 
