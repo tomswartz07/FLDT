@@ -30,7 +30,7 @@ program, which heavily used this software, can be found
 ## Install
 #### Prerequisites
 * Node.js
-* Redis
+* Redis-Server
 * A NFS export of /images
 * A DHCP server configured for PXE booting, along with TFTPd
 * A compiled Linux kernel with support for your hardware, devtmpfs, and NFS filesystems.
@@ -46,6 +46,9 @@ npm install
 cd ../bootimage
 ./makeimage
 cp -r images/* /var/lib/tftpboot
+
+# Start Server
+sudo node server/server.js
 ```
 
 Next, set up a PXE infrastructure to boot the generated images.
@@ -57,7 +60,7 @@ The default imaging scripts expect these items in an image:
 * A sfdisk generated partitiontable.txt
 * Each partimage image for each partition named with the drive name (i.e. The file named sda1 will be restored to /dev/sda1)
 
-#### Customizing Image Process
+## Customizing Image Process
 FLDT is not as turn-key as other imaging solutions, such as [FOG](http://www.fogproject.org/) - but it makes up for this in the ease by which it may be configured.
 
 Each "action" that FLDT performs is a separate script, which is put into the bootable image.
