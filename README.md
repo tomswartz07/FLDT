@@ -27,6 +27,10 @@ program, which heavily used this software, can be found
 - [Partclone](http://partclone.org/)
 - [Udpcast](http://www.udpcast.linux.lu)
 
+## Screenshot
+![Hosts](https://raw.githubusercontent.com/tomswartz07/FLDT/fba88ad772616cc608628ca1babc5799c96ad49d/screenshots/3.png)
+
+
 ## Install
 #### Prerequisites
 * Node.js
@@ -58,6 +62,8 @@ Next, set up a PXE infrastructure to boot the generated images.
 For further information on this process, refer to the [PXELINUX project](http://www.syslinux.org/wiki/index.php/PXELINUX).
 
 A detailed guide for setting up the PXE boot environment is found on the [ArchWiki](https://wiki.archlinux.org/index.php/PXE#Server_setup).
+
+Following that, the server could be started via the command ``node FLDT/server/server.js``. You might need sudo depending on how redis-server is configured.
 
 #### Creating an Image
 The default imaging scripts expect these items in an image:
