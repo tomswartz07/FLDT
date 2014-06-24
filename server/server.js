@@ -5,7 +5,7 @@
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
 
-       http://www.apache.org/licenses/LICENSE-2.0
+   http://www.apache.org/licenses/LICENSE-2.0
 
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,15 +17,19 @@
 process.chdir(__dirname);
 
 var fs = require("fs"),
-	express = require("express"),
-	app = express(),
-	hostDB = require("./Host.js"),
-	multicastManager = require("./MulticastManager.js"),
-	redis = require("redis").createClient();
+    express = require("express"),
+    bodyParser = require('body-parser'),
+    serveStatic = require('serve-static'),
+    http = require('http'),
+    app = express(),
+    hostDB = require("./Host.js"),
+    net = require('net'),
+    multicastManager = require("./MulticastManager.js"),
+    redis = require("redis").createClient();
 
 var hosts = new Array();
 
-app.use(express.bodyParser({uploadDir:"/tmp"}));
+app.use(bodyParser({uploadDir:"/tmp"}));
 app.engine('jshtml', require('jshtml-express'));
 app.set('view engine', 'jshtml');
 
@@ -33,39 +37,39 @@ images = fs.readdirSync("/images");
 
 selectedImage = 0;
 redis.get("selectedImage", function(err, res)
-{
-	if ( res )
-		selectedImage = parseInt(res);
-})
+		{
+			if ( res )
+	selectedImage = parseInt(res);
+		})
 
 app.get("/api/currentImage", function(req,res)
+		{
+			newParam = req.param("set");
+			console.log(newParam);
+			if ( newParam != undefined && newParam > 0 && newParam < images.length )
 {
-	newParam = req.param("set");
-	console.log(newParam);
-	if ( newParam != undefined && newParam > 0 && newParam < images.length )
-	{
-		selectedImage = newParam;
-		redis.set("selectedImage", newParam);
-	}	
-	res.send(images[selectedImage]);
+	selectedImage = newParam;
+	redis.set("selectedImage", newParam);
+}
+res.send(images[selectedImage]);
 });
 
 app.get("/api/postImageAction", function(req,res)
+		{
+			if ( req.param("set") != undefined  )
 {
-	if ( req.param("set") != undefined  )
-	{
-		redis.set("postImageAction", req.param("set"));
-	}
-	else
-	{
-		redis.get("postImageAction", function(err,redisres)
+	redis.set("postImageAction", req.param("set"));
+}
+else
+{
+	redis.get("postImageAction", function(err,redisres)
 		{
 			if ( redisres == undefined )
-				res.send("shell");
+		res.send("shell");
 			else
-				res.send(redisres);
+		res.send(redisres);
 		});
-	}
+}
 });
 
 app.get("/api/images", function(req,res)
@@ -98,7 +102,7 @@ app.get("/", function (req,res)
 	res.redirect("/images");
 })
 
-app.get("/images", function(req,res) { 
+app.get("/images", function(req,res) {
 	redis.get("postImageAction", function(err, action)
 	{
 		res.locals({
@@ -117,53 +121,53 @@ app.post("/hosts", function(req,res) {
 	res.redirect("/hosts");
 });
 
-app.get("/hosts", function(req,res) { 
+app.get("/hosts", function(req,res) {
 	if ( req.param("reset") )
-	{
-		hostDB.resetHosts();
-		res.redirect("/hosts");
-	}
-	else
-	{	
-		hostDB.getHosts(function(hosts)
+{
+	hostDB.resetHosts();
+	res.redirect("/hosts");
+}
+else
+{
+	hostDB.getHosts(function(hosts)
 		{
 			redis.mget(hosts, function(err, macAddrs)
-			{
-				for ( var i = 0; i < hosts.length; i++)
 				{
-					hosts[i] = hosts[i].substring(4);
-				}
-				res.locals({
-					hosts: hosts,
-					macAddrs: macAddrs,
-					"nHosts": hosts.length
-				});
-				res.render("hosts");
+					for ( var i = 0; i < hosts.length; i++)
+			{
+				hosts[i] = hosts[i].substring(4);
+			}
+			res.locals({
+				hosts: hosts,
+				macAddrs: macAddrs,
+				"nHosts": hosts.length
 			});
+			res.render("hosts");
+				});
 		});
-	}
+}
 });
 
 
-app.get("/multicast", function(req,res) { 
+app.get("/multicast", function(req,res) {
 	res.locals({
 		inProgress: multicastManager.getStatus(),
 		pid: multicastManager.getPID(),
 		currentImage: images[selectedImage]
 	});
-	
+
 	if ( req.param("start") )
-	{
-		multicastManager.start(images[selectedImage], req.param("autostart"));
-		res.redirect("/multicast");
-	}
-	else if ( req.param("stop") )
-	{
-		multicastManager.stop();
-		res.redirect("/multicast");
-	}
-	else
-		res.render("multicast");
+{
+	multicastManager.start(images[selectedImage], req.param("autostart"));
+	res.redirect("/multicast");
+}
+else if ( req.param("stop") )
+{
+	multicastManager.stop();
+	res.redirect("/multicast");
+}
+else
+res.render("multicast");
 });
 
 
