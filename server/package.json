@@ -3,7 +3,7 @@
 	"description": "Server-side interface for FLDT",
 	"version": "0.0.2",
 	"dependencies": {
-		"express": "*",
+		"express": "<4.0",
 		"body-parser": "*",
 		"morgan": "*",
 		"serve-index": "*",

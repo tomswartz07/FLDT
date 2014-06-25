@@ -1,5 +1,5 @@
 /*
-  Copyright 2013 Andrew Lobos and Penn Manor School District
+   Copyright 2013 Andrew Lobos and Penn Manor School District
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -12,24 +12,20 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-*/
+   */
 
 process.chdir(__dirname);
 
 var fs = require("fs"),
     express = require("express"),
-    bodyParser = require('body-parser'),
-    serveStatic = require('serve-static'),
-    http = require('http'),
     app = express(),
     hostDB = require("./Host.js"),
-    net = require('net'),
     multicastManager = require("./MulticastManager.js"),
     redis = require("redis").createClient();
 
 var hosts = new Array();
 
-app.use(bodyParser({uploadDir:"/tmp"}));
+app.use(express.bodyParser({uploadDir:"/tmp"}));
 app.engine('jshtml', require('jshtml-express'));
 app.set('view engine', 'jshtml');
 
@@ -50,7 +46,7 @@ app.get("/api/currentImage", function(req,res)
 {
 	selectedImage = newParam;
 	redis.set("selectedImage", newParam);
-}
+}	
 res.send(images[selectedImage]);
 });
 
@@ -73,46 +69,46 @@ else
 });
 
 app.get("/api/images", function(req,res)
-{
-	res.json(images);
-});
+		{
+			res.json(images);
+		});
 
 app.get("/api/hostname", function (req,res)
-{
-	mac = req.param("mac").toString().toLowerCase();
-	hostDB.getHostnameByMAC(mac, function(host)
-	{
-		if ( host )
-			res.send(host);	
-		else
-			res.send("unknown");
-	});
-});
+		{
+			mac = req.param("mac").toString().toLowerCase();
+			hostDB.getHostnameByMAC(mac, function(host)
+				{
+					if ( host )
+				res.send(host);	
+					else
+				res.send("unknown");
+				});
+		});
 
 app.get("/api/multicastStatus", function(req,res)
-{
-	if ( multicastManager.getStatus() )
-		res.send("running");
-	else
-		res.send("stopped");
-});
+		{
+			if ( multicastManager.getStatus() )
+	res.send("running");
+			else
+	res.send("stopped");
+		});
 
 app.get("/", function (req,res)
-{
-	res.redirect("/images");
-})
+		{
+			res.redirect("/images");
+		})
 
-app.get("/images", function(req,res) {
+app.get("/images", function(req,res) { 
 	redis.get("postImageAction", function(err, action)
-	{
-		res.locals({
-			"images": images,
-			"selectedImage": selectedImage,
-			"action": action
+		{
+			res.locals({
+				"images": images,
+				"selectedImage": selectedImage,
+				"action": action
+			});
+
+			res.render("images");
 		});
-	
-		res.render("images");
-	});
 });
 
 
@@ -121,14 +117,14 @@ app.post("/hosts", function(req,res) {
 	res.redirect("/hosts");
 });
 
-app.get("/hosts", function(req,res) {
+app.get("/hosts", function(req,res) { 
 	if ( req.param("reset") )
 {
 	hostDB.resetHosts();
 	res.redirect("/hosts");
 }
 else
-{
+{	
 	hostDB.getHosts(function(hosts)
 		{
 			redis.mget(hosts, function(err, macAddrs)
@@ -149,7 +145,7 @@ else
 });
 
 
-app.get("/multicast", function(req,res) {
+app.get("/multicast", function(req,res) { 
 	res.locals({
 		inProgress: multicastManager.getStatus(),
 		pid: multicastManager.getPID(),
