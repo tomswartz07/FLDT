@@ -14,9 +14,10 @@
 #   limitations under the License.
 
 IMAGING_SERVER="10.0.0.1"
+IMAGING_PORT="8080"
 MACADDR=`ifconfig | grep "eth0" | tr -s ' ' | cut -d ' ' -f5`
-wget -O hostname http://$IMAGING_SERVER/api/hostname?mac=$MACADDR 2> /dev/null
-wget -O currentImage http://$IMAGING_SERVER/api/currentImage 2> /dev/null
+wget -O hostname http://$IMAGING_SERVER:8080/api/hostname?mac=$MACADDR 2> /dev/null
+wget -O currentImage http://$IMAGING_SERVER:8080/api/currentImage 2> /dev/null
 HOSTNAME="`cat hostname`"
 IMAGE_NAME="`cat currentImage`"
 
