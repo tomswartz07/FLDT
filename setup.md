@@ -6,7 +6,11 @@ ArchLinux was chosen because of the completeness of their documentation with reg
 
 ## Prerequesites
 
-*Assuming that a base OS install has already been completed:* 
+Please assure you have enough disk space to maintian this project.
+The root filesystem will need about 30G of free space (after OS install)
+
+*If a base OS install has not already been completed, please follow instructions* [here](https://wiki.archlinux.org/index.php/Beginners_Guide).
+
 Install the required software as follows:
 
 ```bash
@@ -14,20 +18,36 @@ Install the required software as follows:
 pacman -S nodejs redis cpio git udpcast partclone
 
 # PXE required
-pacman -S dnsmasq darkhttpd
+pacman -S dnsmasq darkhttpd nfs-utils
 ```
 
 ## Required Files
 
 ### Files for FLDT
-Make a folder to store the deployable images
+Make a folder to store the deployable images. This shared folder will be configured in the NFS exports section.
 ```bash
 mkdir /images/ # Root folder for all images
-mkdir /images/DeployableImageTitle # Folder containing all files needed for DeployableImageTitle's image
+mkdir /images/DeployableImage # Folder containing all files needed for DeployableImage's image
 ```
+For this setup, a Jenkins/Hudson instance creates a new image daily, which is copied to a server.
+The image is created using [Packer](http://packer.io) to automate all steps of the process.
+At the conclusion of the Packer build, Jenkins runs partclone to generate a `build.img`.
+The `build.img` file is then rsync'ed to a server as sda1
+
+The default imaging scripts expect these items to deploy an image:
+
+* A folder in /image with the folder's name
+* Each partimage image for each partition named with the drive name (i.e. The file named sda1 will be restored to /dev/sda1)
+* A sfdisk generated partitiontable.txt
+
+The `makeimage.sh` script will take care of most of these items automatically. Please refer to the FLDT service sectionf for more info.
 
 ### Files for Support Services
-Now deploy all of the files in the tftpboot.tar.gz archive to the locations defined in the dnsmasq configuration.
+A tarball of the files needed for bootstrapping PXE are included in pxeboot.tar.gz
+
+The tarball includes a very small (17kB) PXE kernel, a vesa bootmenu, and bootable x64/386 linux kernels provided by [Popcorn Linux](http://www.popcornlinux.org/).
+
+These files will be supplemented via the FLDT-generated deployment images.
 ```bash
 mkdir /pxeboot
 cp /path/to/tftpboot.tar.gz /pxeboot
@@ -36,19 +56,32 @@ tar xzvf /pxeboot/tftpboot.tar.gz /pxeboot
 
 ## Services
 
-Next, set up and enable the services.
+Several services must be configured before FLDT may run.
 
 ### dnsmasq
-Edit the file /etc/dnsmasq.conf to add the following:
+Edit the file `/etc/dnsmasq.conf` to add the following:
 ```bash
-port=0 # Disables DNS function, only enabling DHCP and TFTP
-interface=« ETH INTERFACE » # Replace with Ethernet interface used (eth0, enp2s0, etc)
+# Disables DNS function, only enabling DHCP and TFTP
+port=0
+
+# Replace with Ethernet interface used (eth0, enp2s0, etc)
+interface=«ETH INTERFACE»
+
+# Bind the network interface to the service
 bind-interfaces
-dhcp-range=10.0.0.50,10.0.0.150,45m # Enables DHCP service, 100 devices (ip range 50-150) with expiry of 45 minutes
-dhcp-boot=pxelinux.0 # PXE file
-dhcp-option-force=209,pxelinux.cfg/default # Defines boot menu options
+
+# Enable DHCP service, expiry of 45 minutes
+dhcp-range=10.0.0.50,10.0.0.150,45m
+
+# PXE file
+dhcp-boot=pxelinux.0
+
+# Define boot menu options
+dhcp-option-force=209,pxelinux.cfg/default
+
+# Enable TFTP and define path to all PXE files
 enable-tftp
-tftp-root=/pxeboot # Where all PXE files are stored
+tftp-root=/pxeboot
 ```
 Finally (re)start the dnsmasq service, and optionally watch the output as devices connect
 ```bash
@@ -57,12 +90,58 @@ systemctl restart dnsmasq.service
 journalctl -u dnsmasq.service -f # Optional
 ```
 
+### NFS
+Configure the NFS shares on the system.
+
+First, set up the ID mapping, and set the Domain: `/etc/imapd.conf`
+```bash
+[General]
+
+Verbosity = 1
+Pipefs-Directory = /var/lib/nfs/rpc_pipefs
+Domain = FLDT
+
+[Mapping]
+
+Nobody-User = nobody
+Nobody-Group = nobody
+```
+
+Next, configure the NFS root export. For security reasons, it is recommended to use an NFS export root which will keep users limited to that mount point only.
+Define shares in `/etc/exports` which are relative to the NFS root.
+
+```bash
+mkdir -p /srv/nfs4/images
+chmod 0774 /srv/nfs4/images
+# Now mount the actual target share `/images` to the NFS share
+mount --bind /images /srv/nfs4/images
+```
+
+To assure that the NFS share 'sticks' across reboots, add the following line to `/etc/fstab`
+```bash
+/images /srv/nfs4/images none bind 0 0
+```
+
+Next, add directories to be shared (and IP addresses of who will access them) to `/etc/exports`.
+
+If the imaging server will be exclusively offline, then 'global' permission may be set up. Use this option with extreme caution.
+```bash
+/srv/nfs4/ *(rw,fsid=root,no_subtree_check)
+/srv/nfs4/images *(rw,no_subtree_check,nohide) # Note the nohide option which is applied to mounted directories on the file system.
+```
+After modifying `/etc/exports`, it is necessary to refresh the service via the command: `exportfs -rav`
+
+Finally, (re)start the NFS server via the command: `systemctl start nfs-server.service`
+
 ### FLDT
 Next, set up the FLDT services.
 ```bash
 cd ~/ # We're storing FLDT files in home folder, for ease of location
 git clone http://github.com/tomswartz07/FLDT
-cd FLDT/server
+cd FLDT/bootimage
+./makeimage.sh # Run the script to create bootable images
+cp -r images/* /pxeboot # Move generated images to PXE folder for use
+cd ../server
 npm install # Install FLDT service and dependencies
 redis-server & # Start Redis server,  '&' will fork it to background
 node server.js
