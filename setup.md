@@ -4,9 +4,9 @@ Setup process has been tested for ArchLinux, but should be similar for Ubuntu or
 
 ArchLinux was chosen because of the completeness of their documentation with regard to the individual software parts.
 
-## Prerequesites
+## Prerequisites
 
-Please assure you have enough disk space to maintian this project.
+Please assure you have enough disk space to maintain this project.
 The root filesystem will need about 30G of free space (after OS install)
 
 *If a base OS install has not already been completed, please follow instructions* [here](https://wiki.archlinux.org/index.php/Beginners_Guide).
@@ -40,7 +40,7 @@ The default imaging scripts expect these items to deploy an image:
 * Each partimage image for each partition named with the drive name (i.e. The file named sda1 will be restored to /dev/sda1)
 * A sfdisk generated partitiontable.txt
 
-The `makeimage.sh` script will take care of most of these items automatically. Please refer to the FLDT service sectionf for more info.
+The `makeimage.sh` script will take care of most of these items automatically. Please refer to the FLDT service section for more info.
 
 ### Files for Support Services
 A tarball of the files needed for bootstrapping PXE are included in pxeboot.tar.gz
@@ -124,11 +124,13 @@ To assure that the NFS share 'sticks' across reboots, add the following line to 
 
 Next, add directories to be shared (and IP addresses of who will access them) to `/etc/exports`.
 
-If the imaging server will be exclusively offline, then 'global' permission may be set up. Use this option with extreme caution.
 ```bash
 /srv/nfs4/ *(rw,fsid=root,no_subtree_check)
-/srv/nfs4/images *(rw,no_subtree_check,nohide) # Note the nohide option which is applied to mounted directories on the file system.
+/srv/nfs4/images *(rw,no_subtree_check,nohide)
+# Note the nohide option which is applied to mounted directories on the file system.
 ```
+If the imaging server will be exclusively offline, then 'global' permission may be set up as noted above. **Use this option with extreme caution.**
+
 After modifying `/etc/exports`, it is necessary to refresh the service via the command: `exportfs -rav`
 
 Finally, (re)start the NFS server via the command: `systemctl start nfs-server.service`
