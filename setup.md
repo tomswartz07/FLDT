@@ -43,15 +43,15 @@ The default imaging scripts expect these items to deploy an image:
 The `makeimage.sh` script will take care of most of these items automatically. Please refer to the FLDT service section for more info.
 
 ### Files for Support Services
-A tarball of the files needed for bootstrapping PXE are included in pxeboot.tar.gz
+A tarball of the files needed for bootstrapping PXE are included in `pxeboot.tar.gz`
 
 The tarball includes a very small (17kB) PXE kernel, a vesa bootmenu, and bootable x64/386 linux kernels provided by [Popcorn Linux](http://www.popcornlinux.org/).
 
 These files will be supplemented via the FLDT-generated deployment images.
 ```bash
 mkdir /pxeboot
-cp /path/to/tftpboot.tar.gz /pxeboot
-tar xzvf /pxeboot/tftpboot.tar.gz /pxeboot
+cp /path/to/pxeboot.tar.gz /pxeboot
+tar xzvf /pxeboot/pxeboot.tar.gz /pxeboot
 ```
 
 ## Services
