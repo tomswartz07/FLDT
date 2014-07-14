@@ -29,13 +29,16 @@ mount -t nfs4 $IMAGING_SERVER:/images /nfs
 
 sfdisk /dev/sda < /nfs/$IMAGE_NAME/partitiontable.txt
 
+# Add Network Route for Mulitcasting
+route add -net 224.0.0.0 netmask 240.0.0.0 dev eth0
+
 hdparm -z /dev/sda
 mdev -s
 
 for f in `find /nfs/$IMAGE_NAME/sd* -type f | sort -nr`
 do
 	echo "Restoring $f"
-	udp-receiver | partclone.extfs -r -s - -o /dev/`basename $f` -L /partclone.log
+	udp-receiver --mcast-rdv-address 224.0.0.1 | partclone.extfs -r -s - -o /dev/`basename $f` -L /partclone.log
 done
 
 
