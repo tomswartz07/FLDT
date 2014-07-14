@@ -157,3 +157,21 @@ Navigate to http://localhost:8080 to access the FLDT interface
 Select the image on the Images page, load the hosts .csv as directed on the Hosts page, and finally enter the number of hosts and begin multicasting on the Multicasting page.
 
 As the targeted devices netboot, they should be picked up by the PXE service.
+
+If FLDT has been previously set up, the following steps are only needed to begin the service after a fresh reboot:
+```bash
+# Navigate to FLDT directory
+cd /path/to/FLDT
+
+# Enable Network Devices
+ip addr add 10.0.0.1/24 dev «DEVICE»
+ip link set «DEVICE» up
+
+# Start/restart support services
+systemctl restart dnsmasq
+redis-server &
+
+# Start FLDT
+node server/server.js
+# FLDT can now be accessed via web browser: http://localhost:8080
+```
