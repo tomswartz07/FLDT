@@ -175,3 +175,5 @@ redis-server &
 node server/server.js
 # FLDT can now be accessed via web browser: http://localhost:8080
 ```
+Alternately, a simple setup script has been provided in the root of the FLDT folder.
+To use, simply run `./startup.sh -p /full/FLDT/path -i networkInterfaceName`
