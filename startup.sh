@@ -27,7 +27,7 @@ echo "Setting up networking"
 ip addr add 10.0.0.1/24 dev $INTERFACE
 ip link set $INTERFACE up
 echo "Restarting DHCP/PXE service"
-systemct restart dnsmasq.service
+systemctl restart dnsmasq.service
 echo "Starting Redis"
 redis-server &
 echo "Starting FLDT service"
