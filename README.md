@@ -27,17 +27,29 @@ program, which heavily used this software, can be found
 - [Partclone](http://partclone.org/)
 - [Udpcast](http://www.udpcast.linux.lu)
 
+## Screenshot
+![Hosts](https://raw.githubusercontent.com/tomswartz07/FLDT/master/screenshots/3.png)
+
+
 ## Install
 #### Prerequisites
 * Node.js
-* Redis
-* A NFS export of /images
+* Redis-Server
+* CPIO
+* A NFS export of image files located at `/images`
 * A DHCP server configured for PXE booting, along with TFTPd
 * A compiled Linux kernel with support for your hardware, devtmpfs, and NFS filesystems.
 
+
 #### Installation
+The information listed below will provide generic instructions on the setup process.
+For a detailed guide on the entire setup process, please refer to the [setup guide](setup.md).
+
 Basic installation is as follows:
 ```bash
+# Clone the project and project files
+git clone http://github.com/tomswartz07/FLDT
+
 # Install Node.js dependencies
 cd FLDT/server
 npm install
@@ -49,16 +61,12 @@ cp -r images/* /var/lib/tftpboot
 ```
 
 Next, set up a PXE infrastructure to boot the generated images.
-For further information on this process, refer to the [PXELINUX project](http://www.syslinux.org/wiki/index.php/PXELINUX).
+A detailed guide for setting up the PXE boot environment is found on the [ArchWiki](https://wiki.archlinux.org/index.php/PXE#Server_setup).
 
-#### Creating an Image
-The default imaging scripts expect these items in an image:
-* A folder in /image with the folder's name
-* A sfdisk generated partitiontable.txt
-* Each partimage image for each partition named with the drive name (i.e. The file named sda1 will be restored to /dev/sda1)
-
-#### Customizing Image Process
+## Customizing Image Process
 FLDT is not as turn-key as other imaging solutions, such as [FOG](http://www.fogproject.org/) - but it makes up for this in the ease by which it may be configured.
 
 Each "action" that FLDT performs is a separate script, which is put into the bootable image.
-If you need FLDT to do something different, simply edit the scripts in ``bootimage/scripts`` and run ``makeimage.sh`` to regenerate the boot images.
+For example, a bash script may be used to force the user to reset a password on first login.
+
+If you need FLDT to do something different, simply edit the scripts in `bootimage/scripts` and run `makeimage.sh` to regenerate the boot images.
