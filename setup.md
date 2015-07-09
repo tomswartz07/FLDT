@@ -40,7 +40,6 @@ The default imaging scripts expect these items to deploy an image:
 * Each partimage image for each partition named with the drive name (i.e. The file named sda1 will be restored to /dev/sda1)
 * A sfdisk generated partitiontable.txt
 
-The `makeimage.sh` script will take care of most of these items automatically. Please refer to the FLDT service section for more info.
 
 ### Files for Support Services
 A tarball of the files needed for bootstrapping PXE are included in `pxeboot.tar.gz`
@@ -53,6 +52,8 @@ mkdir /pxeboot
 cp /path/to/pxeboot.tar.gz /pxeboot
 tar xzvf /pxeboot/pxeboot.tar.gz /pxeboot
 ```
+The `makeimage.sh` script will automatically build in any extra scripts to the PXE image.
+If you have extra scripts to add (there are a few included here) run `makeimage.sh` at this time.
 
 ## Services
 
@@ -93,6 +94,7 @@ journalctl -u dnsmasq.service -f # Optional
 ### NFS
 Configure the NFS shares on the system.
 
+You might need to set up ID mapping for a domain. This is optional.
 First, set up the ID mapping, and set the Domain: `/etc/imapd.conf`
 ```bash
 [General]
