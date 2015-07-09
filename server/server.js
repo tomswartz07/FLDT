@@ -61,7 +61,7 @@ else
 	redis.get("postImageAction", function(err,redisres)
 		{
 			if ( redisres == undefined )
-		res.send("shell");
+		res.send("reboot");
 			else
 		res.send(redisres);
 		});
@@ -75,7 +75,7 @@ app.get("/api/images", function(req,res)
 
 app.get("/api/hostname", function (req,res)
 		{
-			mac = req.param("mac").toString().toLowerCase();
+			mac = req.param("mac")
 			hostDB.getHostnameByMAC(mac, function(host)
 				{
 					if ( host )
