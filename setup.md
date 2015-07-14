@@ -137,6 +137,16 @@ After modifying `/etc/exports`, it is necessary to refresh the service via the c
 
 Finally, (re)start the NFS server via the command: `systemctl start nfs-server.service`
 
+These NFS shares will be from where the images themselves are served to the clients.
+Each folder within the `/images` directory should contain the files needed for imaging.
+
+There are three files that are needed for imaging a device:
+1. `sda1` : a file named after each drive and partition
+2. `partitiontable.txt` : a text file with partitions used for setting drive partition size
+3. `postimage.sh` : a script that contains actions to perform following the image install
+
+The `partitiontable.txt` file will be generated once FLDT is up and running, but prior to imaging.
+
 ### FLDT
 Next, set up the FLDT services.
 ```bash
@@ -159,6 +169,10 @@ Navigate to http://localhost:8080 to access the FLDT interface
 Select the image on the Images page, load the hosts .csv as directed on the Hosts page, and finally enter the number of hosts and begin multicasting on the Multicasting page.
 
 As the targeted devices netboot, they should be picked up by the PXE service.
+
+If you do not have a `partitiontable.txt` file already, select 'Boot to Shell' and [set up your disks with fdisk/sfdisk](https://wiki.archlinux.org/index.php/Partitioning#Fdisk_usage_summary).
+You can then capture the data via the command: `sfdisk -d /dev/sda > partitiontable.txt`
+Copy this file to your `/images/<IMAGENAME>/` folder and you'll be all set for imaging.
 
 If FLDT has been previously set up, the following steps are only needed to begin the service after a fresh reboot:
 ```bash
