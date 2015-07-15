@@ -141,6 +141,7 @@ These NFS shares will be from where the images themselves are served to the clie
 Each folder within the `/images` directory should contain the files needed for imaging.
 
 There are three files that are needed for imaging a device:
+
 1. `sda1` : a file named after each drive and partition
 2. `partitiontable.txt` : a text file with partitions used for setting drive partition size
 3. `postimage.sh` : a script that contains actions to perform following the image install
