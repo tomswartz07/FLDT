@@ -4,6 +4,8 @@ Setup process has been tested for ArchLinux, but should be similar for Ubuntu or
 
 ArchLinux was chosen because of the completeness of their documentation with regard to the individual software parts.
 
+**NOTE: This project is currently using a depreciated version of Expressjs. A major revision is being planned to continue support for the future.**
+
 ## Prerequisites
 
 Please assure you have enough disk space to maintain this project.
