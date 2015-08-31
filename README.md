@@ -6,6 +6,8 @@ FLDT
 FLDT (Fast Linux Deployment Toolkit) uses a variety of open source tools to
 quickly image and configure Linux hardware, and is versatile enough to handle
 either single machines or large batches of systems.
+This combination of various small, sharp tools is key for the Unix philosophy of
+"Do One Thing and Do It Well."
 
 FLDT was developed by Penn Manor High School student Andrew Lobos in conjunction
 with the Penn Manor IT Team for use in the 2014 Penn Manor High School 1:1
