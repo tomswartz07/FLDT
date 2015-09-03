@@ -1,18 +1,26 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 import os
+import configparser
 from flask import Flask, render_template, redirect, request
 from redis import Redis
 
 app = Flask(__name__)
 redis = Redis(host='127.0.0.1', port=6379, db=0)
+config = configparser.RawConfigParser()
+configFilePath = 'settings.cfg'
+config.read(configFilePath)
 
 
 @app.route("/")
 def index():
+    "Root webpage path, redirect to /images"
     return redirect('/images')
 
 
 @app.route("/api/currentImage", methods=['GET', 'POST'])
-def currentImage():
+def currentimage():
+    "API to return currently selected image, used by clients during PXE install"
     global selectedImage
     if request.method == 'POST':
         current = request.args.get('set', '')
@@ -28,7 +36,8 @@ def currentImage():
 
 
 @app.route("/api/postImageAction", methods=['GET', 'POST'])
-def ImageAction():
+def imageaction():
+    "API to return currently selected post-image action, used by clients during PXE install"
     global postImageAction
     if request.method == 'POST':
         current = request.args.get('set', '')
@@ -44,16 +53,12 @@ def ImageAction():
 
 
 @app.route("/api/hostname", methods=['GET', 'POST'])
-# def getHostnameByMac(mac):
-#     "Function to parse the mac and return hostname"
-#     hostname = redis.get('mac'+mac).decode('UTF-8')
-#     return hostname
 def hostnamequery():
+    "API to return hostname based upon MAC address, used by clients during PXE install"
     if request.method == 'POST':
-        # Do some magic to set hostname
+        # Do some magic to set hostname, maybe?
         return 'yes'
     elif request.method == 'GET':
-        # Do some magic to return hostname from Redis query
         try:
             current = request.args.get('mac', '')
             hostname = redis.get('mac'+current).decode('UTF-8')
@@ -64,35 +69,35 @@ def hostnamequery():
     else:
         error = 'Guru Meditation #03.03'
         return error
+# def getHostnameByMac(mac):
+#     "Function to parse the mac and return hostname"
+#     hostname = redis.get('mac'+mac).decode('UTF-8')
+#     return hostname
 
 
 @app.route("/images/", methods=['GET', 'POST'])
-def images(images=[]):
-    # osDir is the location where the Image Files are stored
-    # This can (and probably should) be modified
+def images(images=['']):
     global osDir
-    osDir = '/home/tom'
+    osDir = config['setup']['imagepath']
     images = os.listdir(osDir)
-#    if request.form['submit'] == 'Apply':
-#        selectedImage = image
-#        resp = 'You chose: ', selectedImage
-#        return Response(resp)
-    selectedImage = redis.get('selectedImage').decode('UTF-8')
-    return render_template('index.html', images=images, osDir=osDir, selectedImage=selectedImage)
+    return render_template('index.html', images=images, osDir=osDir)
 
 
 @app.route("/hosts")
 @app.route("/hosts/reset")
 def hosts():
-    nHosts = len(redis.keys('host*'))
+    "Defines the Host page functions"
     hosts = redis.keys('host*')
-    return render_template('hosts.html', nHosts=nHosts, hosts=hosts)
+    macs = redis.keys('mac*')
+    nHosts = len(hosts)
+    return render_template('hosts.html', nHosts=nHosts, hosts=hosts, macs=macs)
 
 
 @app.route("/multicast")
 def multicast(inProgress=False):
     selectedImage = redis.get('selectedImage').decode('UTF-8')
-    return render_template('multicast.html', selectedImage=selectedImage, inProgress=inProgress)
+    postImageAction = redis.get('postImageAction').decode('UTF-8')
+    return render_template('multicast.html', selectedImage=selectedImage, inProgress=inProgress, postImageAction=postImageAction)
 
 
 # def listImages():

@@ -34,7 +34,7 @@ body {
 			<label for="selectedImage">Active Image:</label>
 			<select class="form-control" id="selectedImage">
                                 {% for image in images -%}
-                                <option value="{{ image }}" selected="selected">{{ image }}</option>
+                                <option value="{{ image }}" selected="selected">{{ osDir }}/{{ image }}</option>
                                 {% endfor %}
 			</select>
 			</br>
@@ -49,12 +49,10 @@ body {
 
 		<div class="alert alert-info pull-right text-center">
 			<strong>Heads up:</strong></br>
-                        Images are stored on the server in <code>{{ osDir }}</code>.</br>
-                        Current image is <code>{{ selectedImage }}</code></br>
-			Each image has it's own folder.</br>
+			<strong>To create an image:</strong> Netboot using <code>mkImage initrd</code> on a source computer.</br>
+			<strong>To remove an image:</strong> Delete the parent folder.
+			Each image has its own folder.</br>
 			This folder contains the MBR and a file for each partition.</br>
-			<strong>To create an image:</strong> netboot using <code>mkImage initrd</code> on a source computer.</br>
-			<strong>To remove an image:</strong> delete the parent folder.
 		</div>
 	</div>
 </div>

@@ -67,15 +67,17 @@ body {
 			<th>MAC Address</th>
 		</tr>
                 {% for hostname in hosts %}
+                {% for macaddr in macs %}
 		<tr>
                         <td>{{ hostname.decode('UTF-8') }}</td>
-                        <td>{{ mac|d('Undefined') }}</td>
+                        <td>{{ macaddr.decode('UTF-8')|d('Undefined') }}</td>
 		</tr>
                 {% else %}
 		<tr>
                         <td>Not Available</td>
                         <td>Not Available</td>
 		</tr>
+                {% endfor %}
                 {% endfor %}
 	</div>
 </div>

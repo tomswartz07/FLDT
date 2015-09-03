@@ -37,7 +37,7 @@ body {
 	<a href="/multicast?stop=true" class="btn btn-danger pull-right">Kill Multicast</a>
         {%- else -%}
 	<div class="alert alert-info text-center">
-                The currently active image is <code>{{ selectedImage }}</code></br>
+                The currently active image is <code>{{ selectedImage }}</code> and will <code>{{ postImageAction }}</code> after completion.</br>
 		Choose the active image on the <a href="/images" class="alert-link">Image Management</a> page.
 	</div>
 	<form method="get" action="/multicast">
