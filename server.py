@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import os
+import csv
 import configparser
 from flask import Flask, render_template, redirect, request
 from redis import Redis
@@ -61,10 +62,11 @@ def hostnamequery():
     elif request.method == 'GET':
         try:
             current = request.args.get('mac', '')
-            hostname = redis.get('mac'+current).decode('UTF-8')
+            hostname = redis.get('mac'+current).decode('UTF-8')[4:]
             return hostname
-        except:
-            error = 'Unknown Mac Address Request'
+        except Exception:
+            # The host is unknown, so set hostname as such
+            error = 'unknown'
             return error
     else:
         error = 'Guru Meditation #03.03'
@@ -83,21 +85,58 @@ def images(images=['']):
     return render_template('index.html', images=images, osDir=osDir)
 
 
-@app.route("/hosts")
-@app.route("/hosts/reset")
+@app.route("/hosts", methods=['GET', 'POST'])
+# @app.route("/hosts/reset")
 def hosts():
     "Defines the Host page functions"
     hosts = redis.keys('host*')
     macs = redis.keys('mac*')
     nHosts = len(hosts)
-    return render_template('hosts.html', nHosts=nHosts, hosts=hosts, macs=macs)
+    clients = zip(hosts, macs)
+    if request.method == 'POST':
+        hostcsv = request.files.get['file']
+        if hostcsv and allowed_file(hostcsv.filename):
+            return hostcsv
+    return render_template('hosts.html', nHosts=nHosts, clients=clients)
 
 
-@app.route("/multicast")
-def multicast(inProgress=False):
+def allowed_file(filename):
+    ALLOWED_EXTENSIONS = set(['txt', 'csv'])
+    return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
+
+def process_csv_file(csv_file):
+    "Process the csv file and add it to the DB"
+    with open(csv_file) as f:
+        host = csv.reader(f)
+        for row in host:
+            print(row)
+    return host
+
+
+@app.route("/multicast", methods=['GET', 'POST'])
+def multicast(inProgress=False, minClients=10):
+    "Configures the MulticastManager Processes"
+    import subprocess
+    inProgress = redis.get('inProgress').decode('UTF-8')
     selectedImage = redis.get('selectedImage').decode('UTF-8')
     postImageAction = redis.get('postImageAction').decode('UTF-8')
-    return render_template('multicast.html', selectedImage=selectedImage, inProgress=inProgress, postImageAction=postImageAction)
+    cmd = subprocess.Popen(['ls', '-l'], stdout=subprocess.PIPE, shell=True)
+    pid = cmd.pid
+    if request.method == 'POST':
+        current = request.args.get('inProgress', '')
+        minClients = request.args.get('autostart', '')
+        redis.set('inProgress', current)
+        return redirect('/multicast')
+#    elif request.method == 'GET':
+#        postImageAction = redis.get('postImageAction').decode('UTF-8')
+#        return postImageAction
+#    else:
+#        error = 'Guru Meditation #03.02'
+#        return error
+    return render_template('multicast.html', minClients=minClients,
+                           pid=pid, selectedImage=selectedImage,
+                           inProgress=inProgress, postImageAction=postImageAction)
 
 
 # def listImages():
