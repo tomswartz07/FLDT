@@ -1,30 +1,10 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Imaging</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="/static/css/bootstrap.min.css" rel="stylesheet" media="screen">
-<style type="text/css">
-body {
-	padding-top: 40px;
-}
-</style>
-</head>
-<body>
-<div class="navbar navbar-default navbar-fixed-top" role="navigation">
-	<div class="container">
-		<div class="navbar-header">
-			<a class="navbar-brand" href="#">FLDT</a>
-		</div>
-		<div class="navbar-collapse collapse">
-			<ul class="nav navbar-nav">
+{% extends "layout.html" %}
+{% block nav %}
 				<li class="active"><a href="/images">Images</a></li>
 				<li><a href="/hosts">Hosts</a></li>
 				<li><a href="/multicast">Multicast</a></li>
-			</ul>
-		</div>
-	</div>
-</div>
+{% endblock nav%}
+{% block body %}
 <div class="container">
 	<div class="page-header">
 		<h1>Image Management <small>Fast Linux Deployment Toolkit</small></h1>
@@ -73,7 +53,6 @@ body {
 
 
 
-<script src="/static/js/jquery.js"></script>
 <script type="text/javascript">
 $("#selectedImage").change(function()
 		{
@@ -87,5 +66,4 @@ $("#postImageAction").change(function()
 		$.post("/api/postImageAction?set="+value);
 		});
 </script>
-</body>
-</html>
+{% endblock body %}
