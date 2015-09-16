@@ -118,9 +118,21 @@ def process_csv_file(csv_file):
 def multicast(inProgress=False, minClients=10):
     "Configures the MulticastManager Processes"
     import subprocess
-    inProgress = redis.get('inProgress').decode('UTF-8')
-    selectedImage = redis.get('selectedImage').decode('UTF-8')
-    postImageAction = redis.get('postImageAction').decode('UTF-8')
+    try:
+        inProgress = redis.get('inProgress').decode('UTF-8')
+    except AttributeError:
+        redis.set('inProgress', False)
+        inProgress = redis.get('inProgress').decode('UTF-8')
+    try:
+        selectedImage = redis.get('selectedImage').decode('UTF-8')
+    except AttributeError:
+        redis.set('selectedImage', 'Not Selected')
+        inProgress = redis.get('selectedImage').decode('UTF-8')
+    try:
+        postImageAction = redis.get('postImageAction').decode('UTF-8')
+    except AttributeError:
+        redis.set('postImageAction', 'shell')
+        postImageAction = redis.get('postImageAction').decode('UTF-8')
     cmd = subprocess.Popen(['ls', '-l'], stdout=subprocess.PIPE, shell=True)
     pid = cmd.pid
     if request.method == 'POST':
