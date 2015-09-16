@@ -51,8 +51,8 @@
 	</div>
 </div>
 
-
-
+{% endblock body %}
+{% block footer %}
 <script type="text/javascript">
 $("#selectedImage").change(function()
 		{
@@ -66,4 +66,4 @@ $("#postImageAction").change(function()
 		$.post("/api/postImageAction?set="+value);
 		});
 </script>
-{% endblock body %}
+{% endblock footer %}
