@@ -7,10 +7,13 @@ from flask import Flask, render_template, redirect, request
 from redis import Redis
 
 app = Flask(__name__)
-redis = Redis(host='127.0.0.1', port=6379, db=0)
 config = configparser.RawConfigParser()
 configFilePath = 'settings.cfg'
 config.read(configFilePath)
+redishost = config['db']['host']
+redisport = config['db']['port']
+redisdb = config['db']['db']
+redis = Redis(host=redishost, port=redisport, db=redisdb)
 
 
 @app.route("/")
@@ -107,6 +110,7 @@ def allowed_file(filename):
 
 def process_csv_file(csv_file):
     "Process the csv file and add it to the DB"
+    # Work in progress
     with open(csv_file) as f:
         host = csv.reader(f)
         for row in host:
@@ -158,4 +162,5 @@ def multicast(inProgress=False, minClients=10):
 #     return Folders
 
 if __name__ == "__main__":
-    app.run(port=8080, debug=True)
+    serverport = int(config['setup']['http_port'])
+    app.run(port=serverport, debug=True)
