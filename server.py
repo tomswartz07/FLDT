@@ -18,7 +18,7 @@ redis = Redis(host=redishost, port=redisport, db=redisdb)
 
 @app.route("/")
 def index():
-    "Root webpage path, redirect to /images"
+    "Root webpage path, redirect to /images, since it's more useful"
     return redirect('/images')
 
 
@@ -35,7 +35,7 @@ def currentimage():
         selectedImage = redis.get('selectedImage').decode('UTF-8')
         return selectedImage
     else:
-        error = 'Guru Meditation #03.01.'
+        error = 'Image Selection Error'
         return error
 
 
@@ -52,7 +52,7 @@ def imageaction():
         postImageAction = redis.get('postImageAction').decode('UTF-8')
         return postImageAction
     else:
-        error = 'Guru Meditation #03.02'
+        error = 'PostImage Selection Error'
         return error
 
 
@@ -72,7 +72,7 @@ def hostnamequery():
             error = 'unknown'
             return error
     else:
-        error = 'Guru Meditation #03.03'
+        error = 'Hostname Error'
         return error
 # def getHostnameByMac(mac):
 #     "Function to parse the mac and return hostname"
