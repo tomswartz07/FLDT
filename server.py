@@ -56,6 +56,21 @@ def imageaction():
         return error
 
 
+@app.route("/api/resethosts", methods=['GET', 'POST'])
+def resethosts():
+    "API to reset/clear the hosts database"
+    if request.method == 'POST':
+        verify = request.args.get('reset', '')
+        if verify:
+            redis.flushdb()
+            return redirect('/hosts')
+    elif request.method == 'GET':
+        return redirect('/hosts')
+    else:
+        error = 'Image Selection Error'
+        return error
+
+
 @app.route("/api/hostname", methods=['GET', 'POST'])
 def hostnamequery():
     "API to return hostname based upon MAC address, used by clients during PXE install"
@@ -74,10 +89,6 @@ def hostnamequery():
     else:
         error = 'Hostname Error'
         return error
-# def getHostnameByMac(mac):
-#     "Function to parse the mac and return hostname"
-#     hostname = redis.get('mac'+mac).decode('UTF-8')
-#     return hostname
 
 
 @app.route("/images/", methods=['GET', 'POST'])
@@ -89,7 +100,6 @@ def images(images=['']):
 
 
 @app.route("/hosts", methods=['GET', 'POST'])
-# @app.route("/hosts/reset")
 def hosts():
     "Defines the Host page functions"
     hosts = redis.keys('host*')
@@ -97,25 +107,22 @@ def hosts():
     nHosts = len(hosts)
     clients = zip(hosts, macs)
     if request.method == 'POST':
-        hostcsv = request.files.get['file']
-        if hostcsv and allowed_file(hostcsv.filename):
-            return hostcsv
+        # FIXME : Hardcoded path needs to accept input from form.
+        with open('testhostnames.csv', 'r') as hostcsvfile:
+            reader = csv.reader(hostcsvfile)
+            try:
+                for row in reader:
+                    redis.set("mac"+row[1], "host"+row[0])
+                    redis.set("host"+row[0], "mac"+row[1])
+                return redirect('/hosts')
+            except:
+                print('Fail!')
     return render_template('hosts.html', nHosts=nHosts, clients=clients)
 
 
 def allowed_file(filename):
     ALLOWED_EXTENSIONS = set(['txt', 'csv'])
     return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
-
-
-def process_csv_file(csv_file):
-    "Process the csv file and add it to the DB"
-    # Work in progress
-    with open(csv_file) as f:
-        host = csv.reader(f)
-        for row in host:
-            print(row)
-    return host
 
 
 @app.route("/multicast", methods=['GET', 'POST'])
@@ -154,12 +161,6 @@ def multicast(inProgress=False, minClients=10):
                            pid=pid, selectedImage=selectedImage,
                            inProgress=inProgress, postImageAction=postImageAction)
 
-
-# def listImages():
-#     Folders = []
-#     for item in os.listdir(ImagePath):
-#         Folders.append(item)
-#     return Folders
 
 if __name__ == "__main__":
     serverport = int(config['setup']['http_port'])

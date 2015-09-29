@@ -24,7 +24,7 @@
 		<div class="container-fluid pull-right">
 		<div class="alert alert-info text-center">
 			This data is used for preparing multicast imaging and auto-naming hosts.</br>
-			Host *.csv files should be of the format:<code>hostname,serial,assetTag,wMAC,eMAC,building</code></br>
+			Host *.csv files should be of the format: <code>hostname,ethMAC</code></br>
 			Only the hostname and ethernet MAC fields are used in this context.
 		</div>
 		</div>
@@ -36,8 +36,10 @@
 		</div>
 	</div>
 	<div class="form-group pull-right">
-		<a href="/hosts?reset=true" class="btn btn-warning" id="hostReset">Reset Hosts</a>
-                <p class="help-block">{{nHosts}} hosts loaded in database.</p>
+                <form action = "" method = "post">
+                        <button type="submit" name="hostReset" formaction="/api/resethosts?reset=True" formmethod="POST" class="btn btn-warning">Reset Hosts</button>
+                        <label for="hostReset" class="help-block">{{nHosts}} hosts loaded in database.</label>
+                </form>
 	</div>
 	<h3>Currently loaded devices</h3>
 	<table class="table table-hover table-condensed table-bordered">
