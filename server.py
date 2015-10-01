@@ -19,7 +19,7 @@ redis = Redis(host=redishost, port=redisport, db=redisdb)
 @app.route("/")
 def index():
     "Root webpage path, redirect to /images, since it's more useful"
-    return redirect('/images')
+    return render_template('/index.html')
 
 
 @app.route("/api/currentImage", methods=['GET', 'POST'])
@@ -67,7 +67,7 @@ def resethosts():
     elif request.method == 'GET':
         return redirect('/hosts')
     else:
-        error = 'Image Selection Error'
+        error = 'Hostname Deletion Error'
         return error
 
 
@@ -96,7 +96,7 @@ def images(images=['']):
     global osDir
     osDir = config['setup']['imagepath']
     images = os.listdir(osDir)
-    return render_template('index.html', images=images, osDir=osDir)
+    return render_template('images.html', images=images, osDir=osDir)
 
 
 @app.route("/hosts", methods=['GET', 'POST'])
@@ -136,12 +136,12 @@ def multicast(inProgress=False, minClients=10):
         inProgress = redis.get('inProgress').decode('UTF-8')
     try:
         selectedImage = redis.get('selectedImage').decode('UTF-8')
-    except AttributeError:
+    except BaseException:
         redis.set('selectedImage', 'Not Selected')
         inProgress = redis.get('selectedImage').decode('UTF-8')
     try:
         postImageAction = redis.get('postImageAction').decode('UTF-8')
-    except AttributeError:
+    except BaseException:
         redis.set('postImageAction', 'shell')
         postImageAction = redis.get('postImageAction').decode('UTF-8')
     cmd = subprocess.Popen(['ls', '-l'], stdout=subprocess.PIPE, shell=True)

@@ -1,70 +1,40 @@
 {% extends "layout.html" %}
 {% block nav %}
-				<li class="active"><a href="/images">Images</a></li>
+				<li><a href="/images">Images</a></li>
 				<li><a href="/hosts">Hosts</a></li>
 				<li><a href="/multicast">Multicast</a></li>
 {% endblock nav%}
 {% block body %}
-<div class="container">
-	<div class="page-header">
-		<h1>Image Management <small>Fast Linux Deployment Toolkit</small></h1>
-	</div>
-	<div class="container">
-		<div class="form-group pull-left">
-			<label for="selectedImage">Active Image:</label>
-			<select class="form-control" id="selectedImage">
-                                <option value="" selected="selected">Select One&#8230</option>
-                                {% for image in images -%}
-                                <option value="{{ image }}">{{ osDir }}/{{ image }}</option>
-                                {% endfor %}
-			</select>
-			</br>
-			<label for="postImageAction">Action After Imaging:</label>
-			<select class="form-control" id="postImageAction">
-				<option value="none" selected="selected">Select One&#8230</option>
-				<option value="reboot -f">Reboot</option>
-				<option value="shell">Drop to Shell</option>
-				<option value="shutdown -f">Shutdown</option>
-			</select>
-		</div>
-
-		<div class="alert alert-info pull-right text-center">
-			<strong>Heads up:</strong></br>
-			<strong>To create an image:</strong> Netboot using <code>mkImage initrd</code> on a source computer.</br>
-			<strong>To remove an image:</strong> Delete the parent folder.
-			Each image has its own folder.</br>
-			This folder contains the MBR and a file for each partition.</br>
-		</div>
-	</div>
-</div>
 <div class="jumbotron">
 	<div class="container">
-		<h1>Fast Linux Deployment Toolkit</h1>
-		<p>FLDT (Fast Linux Deployment Toolkit) uses a variety of open source tools to quickly image and configure Linux hardware, and is versatile enough to handle either single machines or large batches of systems.
-		</p>
-		<p>FLDT was developed by Penn Manor High School student Andrew Lobos in conjunction with the Penn Manor IT Team for use in the 2014 Penn Manor High School 1:1 Student Laptop Program.
-		</p>
-		<p>Imaging is accomplished by using partclone to copy and restore only the used blocks from the file system. Images are transferred to clients via NFS or multicasted via udpcast. FLDT also provides methods for running post-image scripts, such as machine-specific configurations like automatically setting hostnames and forcing password change on next boot.
-		</p>
-		</p>
+                <h1>Fast Linux Deployment Toolkit</h1>
+                <p>FLDT (Fast Linux Deployment Toolkit) uses a variety of open source tools to quickly image and configure Linux hardware, and is versatile enough to handle either single machines or large batches of systems.
+                </p>
+                <p>It also provides methods for running post-image scripts, such as machine-specific configurations such as automatically setting hostnames and forcing password change on next boot.
+                </p>
+                <p>FLDT is used in three simple steps:
+                <div class="list-group">
+                        <a href="/images" class="list-group-item">
+                                <h4 class="list-group-item-heading">Select an Image and Post-Image Action</h4>
+                                <p class="list-group-item-text">Select one of the prepared images and choose an action to take following the application of the image.</p>
+                        </a>
+                        <a href="/hosts" class="list-group-item">
+                                <h4 class="list-group-item-heading">Upload a *.csv To Identify the Machines</h4>
+                                <p class="list-group-item-text">FLDT uses a simple *.csv to match MAC addresses to Hostnames.</p>
+                        </a>
+                        <a href="/multicast" class="list-group-item">
+                                <h4 class="list-group-item-heading">Start the Batch Imaging Process</h4>
+                                <p class="list-group-item-text">Once preparations are complete and the devices are ready for imaging, simply click 'Start Multicast' to image a large batch of computers very quickly.</br>
+                                We have had success with imaging up to 100 computers at once, completing in less than 20 minutes.</br>
+                                Imaging is accomplished by using partclone to copy and restore only the used blocks from the file system.</br>
+                                Images can be transferred to clients via NFS or multicasted via udpcast.
+                                </p>
+                        </a>
+                </div>
+                <p>For more information regarding the Fast Linux Deployment Toolkit, please check out the links provided below.
+                </p>
+                </p>
 		<p><a class="btn btn-primary btn-lg" role="button" href="http://www.pennmanor.net/techblog/?page_id=1561">Learn More</a>
 		<a class="btn btn-primary btn-lg" role="button" href="https://github.com/tomswartz07/FLDT">GitHub</a>
 	</div>
-</div>
-
 {% endblock body %}
-{% block footer %}
-<script type="text/javascript">
-$("#selectedImage").change(function()
-		{
-		value = $("#selectedImage").val();
-		$.post("/api/currentImage?set="+value);
-		});
-
-$("#postImageAction").change(function()
-		{
-		value = $("#postImageAction").val();
-		$.post("/api/postImageAction?set="+value);
-		});
-</script>
-{% endblock footer %}
