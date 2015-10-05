@@ -5,6 +5,7 @@ import csv
 import configparser
 from flask import Flask, render_template, redirect, request
 from redis import Redis
+from werkzeug import secure_filename
 
 app = Flask(__name__)
 config = configparser.RawConfigParser()
@@ -105,10 +106,13 @@ def hosts():
     hosts = redis.keys('host*')
     macs = redis.keys('mac*')
     nHosts = len(hosts)
+    # FIXME : returns unmatched pairs. Macs and Hosts are correct, but not paired correctly in the table.
+    # API returns paired macs correctly, however.
     clients = zip(hosts, macs)
     if request.method == 'POST':
-        # FIXME : Hardcoded path needs to accept input from form.
-        with open('testhostnames.csv', 'r') as hostcsvfile:
+        # FIXME : run filetype verification on file. Use 'mimetype' with allowed_file()?
+        rawfile = secure_filename(request.files['file'].filename)
+        with open(rawfile, 'r') as hostcsvfile:
             reader = csv.reader(hostcsvfile)
             try:
                 for row in reader:

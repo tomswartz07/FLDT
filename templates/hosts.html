@@ -15,7 +15,7 @@
 			<form action="" method="post" enctype="multipart/form-data" class="inline pull-left">
 				<div class="form-group">
 					<label for="file">Upload host CSV:</label>
-					<input type="file" name="file" id="file">
+					<input type="file" name="file" id="hostcsv">
 					<p class="help-block">File must be a *.csv</p>
 					<button type="submit" class="btn btn-success">Upload Files</button>
 				</div>
@@ -37,8 +37,7 @@
 	</div>
 	<div class="form-group pull-right">
                 <form action = "" method = "post">
-                        <button type="submit" name="hostReset" formaction="/api/resethosts?reset=True" formmethod="POST" class="btn btn-warning">Reset Hosts</button>
-                        <label for="hostReset" class="help-block">{{nHosts}} hosts loaded in database.</label>
+                        <button type="submit" name="hostReset" formaction="/api/resethosts?reset=True" formmethod="POST" class="btn btn-danger">Clear Hosts <span class="badge">{{nHosts}}</span></button>
                 </form>
 	</div>
 	<h3>Currently loaded devices</h3>
