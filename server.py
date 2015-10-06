@@ -103,24 +103,26 @@ def images(images=['']):
 @app.route("/hosts", methods=['GET', 'POST'])
 def hosts():
     "Defines the Host page functions"
+    clients = []
     hosts = redis.keys('host*')
-    macs = redis.keys('mac*')
+    for host in hosts:
+        mac = redis.get(host)
+        print("Host: ", host, mac)
+        clients.append((host, mac))
+        print("Clients: ", clients)
     nHosts = len(hosts)
-    # FIXME : returns unmatched pairs. Macs and Hosts are correct, but not paired correctly in the table.
-    # API returns paired macs correctly, however.
-    clients = zip(hosts, macs)
     if request.method == 'POST':
-        # FIXME : run filetype verification on file. Use 'mimetype' with allowed_file()?
         rawfile = secure_filename(request.files['file'].filename)
-        with open(rawfile, 'r') as hostcsvfile:
-            reader = csv.reader(hostcsvfile)
-            try:
-                for row in reader:
-                    redis.set("mac"+row[1], "host"+row[0])
-                    redis.set("host"+row[0], "mac"+row[1])
-                return redirect('/hosts')
-            except:
-                print('Fail!')
+        if rawfile and allowed_file(request.files['file'].filename):
+            with open(rawfile, 'r') as hostcsvfile:
+                reader = csv.reader(hostcsvfile)
+                try:
+                    for row in reader:
+                        redis.set("mac"+row[1], "host"+row[0])
+                        redis.set("host"+row[0], "mac"+row[1])
+                    return redirect('/hosts')
+                except:
+                    print('Fail!')
     return render_template('hosts.html', nHosts=nHosts, clients=clients)
 
 
