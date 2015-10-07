@@ -14,15 +14,15 @@
                 </p>
                 <p>FLDT is used in three simple steps:
                 <div class="list-group">
-                        <a href="/images" class="list-group-item">
+                        <a href="{{ url_for('images') }}" class="list-group-item">
                                 <h4 class="list-group-item-heading">Select an Image and Post-Image Action</h4>
                                 <p class="list-group-item-text">Select one of the prepared images and choose an action to take following the application of the image.</p>
                         </a>
-                        <a href="/hosts" class="list-group-item">
+                        <a href="{{ url_for('hosts') }}" class="list-group-item">
                                 <h4 class="list-group-item-heading">Upload a *.csv To Identify the Machines</h4>
                                 <p class="list-group-item-text">FLDT uses a simple *.csv to match MAC addresses to Hostnames.</p>
                         </a>
-                        <a href="/multicast" class="list-group-item">
+                        <a href="{{ url_for('multicast') }}" class="list-group-item">
                                 <h4 class="list-group-item-heading">Start the Batch Imaging Process</h4>
                                 <p class="list-group-item-text">Once preparations are complete and the devices are ready for imaging, simply click 'Start Multicast' to image a large batch of computers very quickly.</br>
                                 We have had success with imaging up to 100 computers at once, completing in less than 20 minutes.</br>
