@@ -107,9 +107,7 @@ def hosts():
     hosts = redis.keys('host*')
     for host in hosts:
         mac = redis.get(host)
-        print("Host: ", host, mac)
         clients.append((host, mac))
-        print("Clients: ", clients)
     nHosts = len(hosts)
     if request.method == 'POST':
         rawfile = secure_filename(request.files['file'].filename)
@@ -127,6 +125,7 @@ def hosts():
 
 
 def allowed_file(filename):
+    "Method for checking filetypes for /hosts"
     ALLOWED_EXTENSIONS = set(['txt', 'csv'])
     return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
