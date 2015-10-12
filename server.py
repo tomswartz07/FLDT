@@ -63,7 +63,11 @@ def resethosts():
     if request.method == 'POST':
         verify = request.args.get('reset', '')
         if verify:
-            redis.flushdb()
+            hosts = redis.keys('host*')
+            for host in hosts:
+                mac = redis.get(host)
+                redis.delete(host)
+                redis.delete(mac)
             return redirect('/hosts')
     elif request.method == 'GET':
         return redirect('/hosts')
