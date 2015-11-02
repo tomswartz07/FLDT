@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% block nav %}
+				<li><a href="/images">Images</a></li>
+				<li><a href="/hosts">Hosts</a></li>
+				<li class="active"><a href="/multicast">Multicast</a></li>
+{% endblock nav %}
+{% block body %}
+<div class="container">
+	<div class="page-header">
+		<h1>Multicast Management <small>Fast Linux Deployment Toolkit</small></h1>
+	</div>
+        {%- if inProgress == "True" -%}
+	<div class="alert alert-success text-center">
+		Multicast is active.</br>
+                Deploying image <code>{{ selectedImage }}</code> - Process ID: <code>{{ pid }}</code>
+	</div>
+        <form method="post">
+		<input type="hidden" name="inProgress" value="False">
+                <input type="submit" class="btn btn-danger pull-right" value="Kill Multicast">
+        </form>
+        {%- else -%}
+	<div class="alert alert-info text-center">
+                The currently active image is <code>{{ selectedImage }}</code> and will <code>{{ postImageAction }}</code> after completion.</br>
+		Choose the active image on the <a href="/images" class="alert-link">Image Management</a> page.
+	</div>
+	<form method="post">
+		<input type="hidden" name="inProgress" value="True">
+		<div class="input-group col-md-6 pull-left">
+			<span class="input-group-addon">Autostart multicast imaging after</span>
+                        <input type="text" name="minClients" id="minClients" value="{{ minClients }}" class="form-control">
+			<span class="input-group-addon">devices connect</span>
+		</div>
+		<input type="submit" class="btn btn-success pull-right" value="Start Multicast">
+	</form>
+        {%- endif -%}
+</div>
+{% endblock body %}

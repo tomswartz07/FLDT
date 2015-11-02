@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+{% block nav %}
+				<li class="active"><a href="/images">Images</a></li>
+				<li><a href="/hosts">Hosts</a></li>
+				<li><a href="/multicast">Multicast</a></li>
+{% endblock nav%}
+{% block body %}
+<div class="container">
+	<div class="page-header">
+		<h1>Image Management <small>Fast Linux Deployment Toolkit</small></h1>
+	</div>
+	<div class="container">
+		<div class="form-group pull-left">
+			<label for="selectedImage">Active Image:</label>
+			<select class="form-control" id="selectedImage">
+                                <option value="" selected="selected">Select One&#8230</option>
+                                {% for image in images -%}
+                                <option value="{{ image }}">{{ osDir }}/{{ image }}</option>
+                                {% endfor %}
+			</select>
+			</br>
+			<label for="postImageAction">Action After Imaging:</label>
+			<select class="form-control" id="postImageAction">
+				<option value="none" selected="selected">Select One&#8230</option>
+				<option value="reboot -f">Reboot</option>
+				<option value="shell">Drop to Shell</option>
+				<option value="shutdown -f">Shutdown</option>
+			</select>
+		</div>
+
+		<div class="alert alert-info pull-right text-center">
+			<strong>Heads up:</strong></br>
+			<strong>To create an image:</strong> Netboot using <code>mkImage initrd</code> on a source computer.</br>
+			<strong>To remove an image:</strong> Delete the parent folder.
+			Each image has its own folder.</br>
+			This folder contains the MBR and a file for each partition.</br>
+		</div>
+	</div>
+</div>
+{% endblock body %}
+{% block footer %}
+<script type="text/javascript">
+$("#selectedImage").change(function()
+		{
+		value = $("#selectedImage").val();
+		$.post("/api/currentImage?set="+value);
+		});
+
+$("#postImageAction").change(function()
+		{
+		value = $("#postImageAction").val();
+		$.post("/api/postImageAction?set="+value);
+		});
+</script>
+{% endblock footer %}

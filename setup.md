@@ -4,6 +4,8 @@ Setup process has been tested for ArchLinux, but should be similar for Ubuntu or
 
 ArchLinux was chosen because of the completeness of their documentation with regard to the individual software parts.
 
+**NOTE: This project is currently using a depreciated version of Expressjs. A major revision is being planned to continue support for the future.**
+
 ## Prerequisites
 
 Please assure you have enough disk space to maintain this project.
@@ -141,6 +143,7 @@ These NFS shares will be from where the images themselves are served to the clie
 Each folder within the `/images` directory should contain the files needed for imaging.
 
 There are three files that are needed for imaging a device:
+
 1. `sda1` : a file named after each drive and partition
 2. `partitiontable.txt` : a text file with partitions used for setting drive partition size
 3. `postimage.sh` : a script that contains actions to perform following the image install
